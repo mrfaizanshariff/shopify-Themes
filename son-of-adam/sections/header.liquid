@@ -64,9 +64,7 @@
         {%- comment -%} Cart Icon {%- endcomment -%}
         <a href="{{ routes.cart_url }}" class="header__action header__cart" aria-label="Cart">
           {{ 'icon-cart.svg' | inline_asset_content }}
-          {% if cart.item_count > 0 %}
-            <span class="header__cart-count">{{ cart.item_count }}</span>
-          {% endif %}
+          <span class="header__cart-count" data-cart-count style="{% if cart.item_count == 0 %}display: none;{% endif %}">{{ cart.item_count }}</span>
         </a>
       </div>
     </div>
@@ -372,15 +370,62 @@
 {% endstylesheet %}
 
 {% javascript %}
-  // Mobile menu toggle
+  // Mobile menu toggle with accessibility improvements
   const menuToggle = document.querySelector('.header__menu-toggle');
   const mobileMenu = document.querySelector('.header__mobile-menu');
+  const body = document.body;
   
   if (menuToggle && mobileMenu) {
+    // Store focusable elements
+    const focusableElements = mobileMenu.querySelectorAll('a[href], button:not([disabled])');
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    
     menuToggle.addEventListener('click', () => {
       const isOpen = mobileMenu.classList.toggle('is-open');
       menuToggle.classList.toggle('is-active', isOpen);
       menuToggle.setAttribute('aria-expanded', isOpen);
+      
+      // Prevent body scroll when menu is open
+      if (isOpen) {
+        body.style.overflow = 'hidden';
+        // Focus first menu item
+        setTimeout(() => firstFocusable?.focus(), 100);
+      } else {
+        body.style.overflow = '';
+        // Return focus to toggle button
+        menuToggle.focus();
+      }
+    });
+    
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
+        mobileMenu.classList.remove('is-open');
+        menuToggle.classList.remove('is-active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        body.style.overflow = '';
+        menuToggle.focus();
+      }
+    });
+    
+    // Focus trap
+    mobileMenu.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && mobileMenu.classList.contains('is-open')) {
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable?.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable?.focus();
+          }
+        }
+      }
     });
   }
 {% endjavascript %}

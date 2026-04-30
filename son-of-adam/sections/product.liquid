@@ -8,7 +8,7 @@
   assign product_form_id = 'product-form-' | append: section.id
 -%}
 
-<div class="product-page full-width section-spacing">
+<article class="product-page full-width section-spacing" role="main" aria-label="Product details">
   <div class="product-page__container">
     
     {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
@@ -194,7 +194,7 @@
     </div>
     
   </div>
-</div>
+</article>
 
 {%- comment -%} Brand Philosophy Section {%- endcomment -%}
 {% if section.settings.show_brand_section %}
@@ -231,9 +231,9 @@
       <div class="product-related__grid">
         {% if section.settings.related_products_collection != blank %}
           {% assign related_collection = collections[section.settings.related_products_collection] %}
-          {% for product in related_collection.products limit: 4 %}
-            {% unless product.id == product.id %}
-              {% render 'product-card', product: product %}
+          {% for related_product in related_collection.products limit: 4 %}
+            {% unless related_product.id == product.id %}
+              {% render 'product-card', product: related_product %}
             {% endunless %}
           {% endfor %}
         {% else %}

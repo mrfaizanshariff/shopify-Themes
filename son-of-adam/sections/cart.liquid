@@ -3,7 +3,7 @@
   Shopping cart with line items, quantity controls, and checkout
 {% endcomment %}
 
-<div class="cart-page full-width section-spacing">
+<main class="cart-page full-width section-spacing" role="main" aria-label="Shopping cart">
   <div class="cart-page__container">
     
     {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
@@ -252,7 +252,7 @@
     {% endif %}
     
   </div>
-</div>
+</main>
 
 <script>
   /**
@@ -275,6 +275,15 @@
     let updateQueue = [];
     let isProcessing = false;
     let debounceTimers = {};
+    
+    /**
+     * Debounce Utility for Cart Quantity Updates
+     * Prevents rapid API calls by delaying execution until user stops changing quantity
+     * Implementation: See debouncedQuantityChange() function (line ~596)
+     * - Delay: 500ms (CONFIG.debounceDelay)
+     * - Clears previous timers when new changes occur
+     * - Reduces server load and improves UX
+     */
     
     // Utility: Format money using Shopify's money format
     function formatMoney(cents) {

@@ -12,28 +12,44 @@
   assign reviews_count = product.metafields.reviews.rating_count | default: 0
   assign average_rating = product.metafields.reviews.rating | default: 0
 -%}
+{%- if reviews_count > 0 -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "AggregateRating",
+    "ratingValue": "{{ average_rating }}",
+    "reviewCount": "{{ reviews_count }}",
+    "itemReviewed": {
+      "@type": "Product",
+      "name": "{{ product.title | escape }}",
+      "image": "{{ product.featured_image | image_url: width: 1200 }}",
+      "url": "{{ shop.url }}{{ product.url }}"
+    }
+  }
+  </script>
+{%- endif -%}
 
 <div class="product-reviews" id="product-reviews" data-product-id="{{ product.id }}">
   <div class="product-reviews__container">
     
     {%- comment -%} Reviews Header {%- endcomment -%}
     <div class="product-reviews__header">
-      <h2 class="product-reviews__title">CUSTOMER REVIEWS</h2>
+      <h2 class="product-reviews__title">{{ 'products.reviews.title' | t }}</h2>
       
       {%- if reviews_count > 0 -%}
         <div class="product-reviews__summary">
           <div class="product-reviews__rating">
             {% render 'star-rating', rating: average_rating, count: reviews_count %}
           </div>
-          <p class="product-reviews__count">Based on {{ reviews_count }} review{% if reviews_count != 1 %}s{% endif %}</p>
+          <p class="product-reviews__count">{{ 'products.reviews.count' | t: count: reviews_count }}</p>
         </div>
       {%- else -%}
-        <p class="product-reviews__no-reviews">Be the first to review this product</p>
+        <p class="product-reviews__no-reviews">{{ 'products.reviews.no_reviews' | t }}</p>
       {%- endif -%}
       
       {%- if show_form -%}
         <button type="button" class="btn btn-secondary product-reviews__write-btn" data-toggle-review-form>
-          Write a Review
+          {{ 'products.reviews.write_button' | t }}
         </button>
       {%- endif -%}
     </div>
@@ -41,13 +57,16 @@
     {%- comment -%} Review Form {%- endcomment -%}
     {%- if show_form -%}
       <div class="product-reviews__form-wrapper" id="review-form" style="display: none;">
-        <h3 class="product-reviews__form-title">Write a Review</h3>
+        <h3 class="product-reviews__form-title">{{ 'products.reviews.form_title' | t }}</h3>
         
         <form class="product-reviews__form" data-review-form>
           <input type="hidden" name="product_id" value="{{ product.id }}">
           
+          {%- comment -%} Honeypot field for spam prevention {%- endcomment -%}
+          <input type="text" name="contact_email" id="contact_email" class="product-reviews__honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+          
           <div class="product-reviews__form-group">
-            <label for="review-rating" class="product-reviews__label">Rating *</label>
+            <label for="review-rating" class="product-reviews__label">{{ 'products.reviews.rating_label' | t }}</label>
             <div class="product-reviews__star-input" data-star-input>
               {% for i in (1..5) %}
                 <button type="button" class="product-reviews__star-btn" data-rating="{{ i }}" aria-label="{{ i }} stars">
@@ -61,30 +80,30 @@
           </div>
           
           <div class="product-reviews__form-group">
-            <label for="review-title" class="product-reviews__label">Review Title *</label>
+            <label for="review-title" class="product-reviews__label">{{ 'products.reviews.title_label' | t }}</label>
             <input type="text" id="review-title" name="title" class="product-reviews__input" required maxlength="100">
           </div>
           
           <div class="product-reviews__form-group">
-            <label for="review-body" class="product-reviews__label">Review *</label>
+            <label for="review-body" class="product-reviews__label">{{ 'products.reviews.body_label' | t }}</label>
             <textarea id="review-body" name="body" class="product-reviews__textarea" required rows="5" maxlength="1000"></textarea>
           </div>
           
           <div class="product-reviews__form-row">
             <div class="product-reviews__form-group">
-              <label for="review-name" class="product-reviews__label">Name *</label>
+              <label for="review-name" class="product-reviews__label">{{ 'products.reviews.name_label' | t }}</label>
               <input type="text" id="review-name" name="author" class="product-reviews__input" required maxlength="50">
             </div>
             
             <div class="product-reviews__form-group">
-              <label for="review-email" class="product-reviews__label">Email *</label>
+              <label for="review-email" class="product-reviews__label">{{ 'products.reviews.email_label' | t }}</label>
               <input type="email" id="review-email" name="email" class="product-reviews__input" required>
             </div>
           </div>
           
           <div class="product-reviews__form-actions">
-            <button type="button" class="btn btn-secondary" data-cancel-review>Cancel</button>
-            <button type="submit" class="btn btn-primary">Submit Review</button>
+            <button type="button" class="btn btn-secondary" data-cancel-review>{{ 'products.reviews.cancel' | t }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'products.reviews.submit' | t }}</button>
           </div>
           
           <div class="product-reviews__form-message" data-form-message style="display: none;"></div>
@@ -107,15 +126,15 @@
               <div class="product-review__rating">
                 {% render 'star-rating', rating: review.rating, show_count: false %}
               </div>
-              <h4 class="product-review__title">{{ review.title }}</h4>
+              <h4 class="product-review__title">{{ review.title | escape }}</h4>
             </div>
             
             <div class="product-review__body">
-              <p>{{ review.body }}</p>
+              <p>{{ review.body | escape }}</p>
             </div>
             
             <div class="product-review__footer">
-              <span class="product-review__author">{{ review.author }}</span>
+              <span class="product-review__author">{{ review.author | escape }}</span>
               <span class="product-review__date">{{ review.created_at | date: "%B %d, %Y" }}</span>
             </div>
             
@@ -129,7 +148,7 @@
       {%- comment -%} Empty State {%- endcomment -%}
       {%- if reviews_count == 0 -%}
         <div class="product-reviews__empty">
-          <p>No reviews yet. Be the first to share your experience!</p>
+          <p>{{ 'products.reviews.empty_state' | t }}</p>
         </div>
       {%- endif -%}
     </div>
@@ -404,6 +423,16 @@
       padding: 24px;
     }
     
+    /* Honeypot field - hidden from users but visible to bots */
+    .product-reviews__honeypot {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
     .product-reviews__form-row {
       grid-template-columns: 1fr;
     }
@@ -508,6 +537,20 @@
         
         const formData = new FormData(reviewForm);
         const data = Object.fromEntries(formData);
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email)) {
+          showMessage('Please enter a valid email address', 'error');
+          return;
+        }
+        
+        // Check honeypot field
+        if (data.contact_email) {
+          // Bot detected - silently fail
+          console.log('Spam detected');
+          return;
+        }
         
         // Validate rating
         if (!data.rating) {

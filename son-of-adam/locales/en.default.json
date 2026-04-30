@@ -48,5 +48,28 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "products": {
+    "reviews": {
+      "title": "CUSTOMER REVIEWS",
+      "count": {
+        "one": "Based on {{ count }} review",
+        "other": "Based on {{ count }} reviews"
+      },
+      "no_reviews": "Be the first to review this product",
+      "write_button": "Write a Review",
+      "form_title": "Write a Review",
+      "rating_label": "Rating *",
+      "title_label": "Review Title *",
+      "body_label": "Review *",
+      "name_label": "Name *",
+      "email_label": "Email *",
+      "cancel": "Cancel",
+      "submit": "Submit Review",
+      "empty_state": "No reviews yet. Be the first to share your experience!",
+      "success_message": "Thank you for your review! It will be published after moderation.",
+      "error_message": "Failed to submit review. Please try again.",
+      "select_rating": "Please select a rating"
+    }
   }
 }

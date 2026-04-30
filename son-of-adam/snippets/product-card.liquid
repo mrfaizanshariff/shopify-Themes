@@ -365,10 +365,27 @@
       try {
         const response = await fetch('/cart.js');
         const cart = await response.json();
-        const cartCount = document.querySelector('.cart-count, [data-cart-count]');
-        if (cartCount) {
-          cartCount.textContent = cart.item_count;
+        const cartCountElement = document.querySelector('[data-cart-count]');
+        
+        if (cartCountElement) {
+          cartCountElement.textContent = cart.item_count;
+          
+          // Show/hide badge based on count
+          if (cart.item_count > 0) {
+            cartCountElement.style.display = '';
+          } else {
+            cartCountElement.style.display = 'none';
+          }
         }
+        
+        // Dispatch custom event for other components that might need to know
+        document.dispatchEvent(new CustomEvent('cart:updated', {
+          detail: {
+            itemCount: cart.item_count,
+            cart: cart
+          }
+        }));
+        
       } catch (error) {
         console.error('Error updating cart count:', error);
       }

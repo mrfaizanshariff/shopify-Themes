@@ -3,7 +3,7 @@
   Displays products with filters, sorting, and grid layout
 {% endcomment %}
 
-<div class="collection-page full-width">
+<main class="collection-page full-width" role="main" aria-label="Collection products">
   <div class="collection-page__container">
     
     {%- comment -%} Breadcrumb Navigation {%- endcomment -%}
@@ -80,7 +80,7 @@
                   This ensures the filter doesn't break if tags aren't set up yet
                   {%- endcomment -%}
                   {%- unless collection.all_tags contains 'category:' -%}
-                    {% comment %} <label class="filter-option">
+                   <label class="filter-option">
                       <input type="checkbox" name="category" value="face">
                       <span class="filter-option__label">Face Care</span>
                       <span class="filter-option__count">(0)</span>
@@ -94,7 +94,7 @@
                       <input type="checkbox" name="category" value="body">
                       <span class="filter-option__label">Body Care</span>
                       <span class="filter-option__count">(0)</span>
-                    </label> {% endcomment %}
+                    </label> 
                   {%- endunless -%}
                 </div>
               </div>
@@ -150,7 +150,7 @@
                   Fallback: If no skin-type tags found, show default options
                   {%- endcomment -%}
                   {%- unless collection.all_tags contains 'skin-type:' -%}
-                    {% comment %} <label class="filter-option">
+                    <label class="filter-option">
                       <input type="checkbox" name="skin-type" value="normal">
                       <span class="filter-option__label">Normal</span>
                       <span class="filter-option__count">(0)</span>
@@ -174,7 +174,7 @@
                       <input type="checkbox" name="skin-type" value="sensitive">
                       <span class="filter-option__label">Sensitive</span>
                       <span class="filter-option__count">(0)</span>
-                    </label> {% endcomment %}
+                    </label> 
                   {%- endunless -%}
                 </div>
               </div>
@@ -327,7 +327,7 @@
       </div>
     </div>
   </div>
-</div>
+</main>
 
 <script>
   (function() {
