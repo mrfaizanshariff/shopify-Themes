@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    {% # Inlined CSS Variables %}
+    {% render 'css-variables' %}
+
+    {% comment %}
+      Custom Font Preloading:
+      Preload critical custom font variants for optimal performance
+      - Old London (Display): Hero headlines
+      - Flama Condensed (Header): Navigation & titles
+      - Mosvita (Body): Content
+    {% endcomment %}
+    
+    {% comment %} Preload Old London (Display font for hero) {% endcomment %}
+    <link rel="preload" href="{{ 'OldLondonAlternate.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    
+    {% comment %} Preload Flama Condensed Bold (Most used header weight) {% endcomment %}
+    <link rel="preload" href="{{ 'FlamaCondensedTrial-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    
+    {% comment %} Preload Mosvita Regular (Body text) {% endcomment %}
+    <link rel="preload" href="{{ 'Mosvita-Regular.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+
+    {% # Load and preload the critical CSS %}
+    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {% # Social, title, etc. %}
+    {% render 'meta-tags' %}
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    {% sections 'header-group' %}
+
+    {{ content_for_layout }}
+
+    {% sections 'footer-group' %}
+  </body>
+</html>
